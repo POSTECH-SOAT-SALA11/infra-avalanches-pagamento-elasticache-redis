@@ -7,7 +7,7 @@ variable "aws-region" {
 terraform {
   backend "s3" {
     bucket  = "6soat-tfstate"
-    key     = "avalanches_pagamento/terraform-redis/terraform.tfstate"
+    key     = "avalanches-pagamento/terraform-redis/terraform.tfstate"
     region  = "sa-east-1"
     encrypt = true
   }
@@ -18,19 +18,19 @@ provider "aws" {
 }
 
 resource "aws_elasticache_subnet_group" "redis_subnet_group" {
-  name       = "avalanches_pagamento-redis-subnet-group"
+  name       = "avalanches-pagamento-redis-subnet-group"
   subnet_ids = [data.aws_subnet.subnet1.id, data.aws_subnet.subnet2.id]
 
   tags = {
-    Name        = "avalanches_pagamento Redis Subnet Group"
+    Name        = "avalanches-pagamento Redis Subnet Group"
     Environment = "production"
-    Service     = "avalanches_pagamento"
+    Service     = "avalanches-pagamento"
   }
 }
 
 resource "aws_elasticache_replication_group" "redis_replication_group" {
-  replication_group_id        = "avalanches_pagamento-redis-replication-group"
-  description                 = "Redis Replication Group for avalanches_pagamento"
+  replication_group_id        = "avalanches-pagamento-redis"
+  description                 = "Redis Replication Group for avalanches-pagamento"
   engine                      = "redis"
   engine_version              = "7.0"
   node_type                   = "cache.t3.micro"
@@ -43,15 +43,15 @@ resource "aws_elasticache_replication_group" "redis_replication_group" {
   security_group_ids          = [aws_security_group.redis_sg.id]
 
   tags = {
-    Name        = "avalanches_pagamento Redis Replication Group"
+    Name        = "avalanches-pagamento Redis Replication Group"
     Environment = "production"
-    Service     = "avalanches_pagamento"
+    Service     = "avalanches-pagamento"
   }
 }
 
 resource "aws_security_group" "redis_sg" {
-  name        = "avalanches_pagamento-redis-sg"
-  description = "Security group for avalanches_pagamento Redis"
+  name        = "avalanches-pagamento-redis-sg"
+  description = "Security group for avalanches-pagamento Redis"
   vpc_id      = data.aws_vpc.selected.id
 
   ingress {
@@ -69,9 +69,9 @@ resource "aws_security_group" "redis_sg" {
   }
 
   tags = {
-    Name        = "avalanches_pagamento Redis Security Group"
+    Name        = "avalanches-pagamento Redis Security Group"
     Environment = "production"
-    Service     = "avalanches_pagamento"
+    Service     = "avalanches-pagamento"
   }
 }
 
