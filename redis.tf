@@ -83,6 +83,20 @@ output "redis_port" {
   value = aws_elasticache_replication_group.redis_replication_group.port
 }
 
+resource "aws_iam_policy" "secretsPolicy" {
+  name = "podsecrets-deployment-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
+        Resource = [aws_secretsmanager_secret.db_credentials.arn]
+      },
+    ]
+  })
+}
+
 output "secrets_policy" {
   value = aws_iam_policy.secretsPolicy.arn
 }
