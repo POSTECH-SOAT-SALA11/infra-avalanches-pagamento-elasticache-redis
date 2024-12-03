@@ -82,3 +82,25 @@ output "redis_primary_endpoint" {
 output "redis_port" {
   value = aws_elasticache_replication_group.redis_replication_group.port
 }
+
+output "secrets_policy" {
+  value = aws_iam_policy.secretsPolicy.arn
+}
+
+output "secrets_id" {
+  value = aws_secretsmanager_secret.db_credentials.id
+}
+
+resource "aws_secretsmanager_secret" "db_credentials" {
+  name                    = "pagamento-dbcredentials"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "db_credentials_version" {
+  secret_id = aws_secretsmanager_secret.db_credentials.id
+  secret_string = jsonencode({
+    redis_host     = aws_elasticache_replication_group.redis_replication_group.primary_endpoint_address
+    redis_port     = aws_elasticache_replication_group.redis_replication_group.port
+    redis_password = ""
+  })
+}
